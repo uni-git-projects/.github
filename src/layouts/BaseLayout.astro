@@ -55,6 +55,19 @@ const i18n: string | undefined =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
 
+    <script
+        is:inline
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-LN0QC18GYY"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args) {
+        window.dataLayer.push(args);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-LN0QC18GYY");
+    </script>
+
     {themeCol && <meta name="theme-color" content={themeCol} />}
 
     <style is:inline set:html={"html.i18n-pending body { visibility: hidden; }"}
