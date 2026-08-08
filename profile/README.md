@@ -56,4 +56,4 @@ under the most-least of ideal circumstances), many involving extensive collabora
 
 ### Statistics - Personal
 
-[![Overview](https://raw.githubusercontent.com/profile-icons/github-stats-modified/refs/heads/generated/overview.svg)](https://github.com/profile-icons/github-stats-modified)  [![Languages](https://raw.githubusercontent.com/profile-icons/github-stats-modified/refs/heads/generated/languages.svg)](https://github.com/profile-icons/github-stats-modified)
+[![Overview](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/overview.svg)](https://github.com/profile-icons/github-stats-mod)  [![Languages](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/languages.svg)](https://github.com/profile-icons/github-stats-mod)
