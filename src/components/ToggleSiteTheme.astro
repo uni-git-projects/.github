@@ -1,0 +1,541 @@
+---
+import { type ThemeModalTrans, themeModalSrc } from "../lib/i18n";
+import { themeNames } from "../lib/theme";
+
+interface Props {
+  imageUrl: string;
+  tagline?: string;
+  styleNames?: string[];
+  translations?: ThemeModalTrans;
+}
+
+const {
+  imageUrl,
+  tagline,
+  styleNames = [],
+  translations = themeModalSrc,
+} = Astro.props;
+const names: string[] = themeNames();
+const showStyleControls: boolean = styleNames.length > 1;
+const themeLbl = (name: string): string =>
+  name
+    .split(/[-_]+/)
+    .map((part: string): string => {
+      if (part.toLowerCase() === "github") return "GitHub";
+      if (part.toLowerCase() === "ayu") return "Ayu";
+      if (part.toLowerCase() === "papercolor") return "PaperColor";
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join(" ");
+const controlButtonClass =
+  "min-h-9 cursor-pointer rounded-lg border border-[var(--toggle-border)] bg-[var(--link-background)] px-[0.7rem] py-[0.4rem] text-[0.78rem] font-[650] leading-[1.2] text-[var(--page-text)] transition-[background-color,border-color,color,box-shadow] duration-[160ms] hover:border-[var(--link-hover-border)] hover:bg-[var(--link-hover-background)] hover:text-[var(--link-hover-text)] focus-visible:[outline:3px_solid_var(--focus-ring)] focus-visible:outline-offset-2 aria-pressed:border-[var(--link-hover-border)] aria-pressed:bg-[var(--link-hover-background)] aria-pressed:text-[var(--link-hover-text)] aria-pressed:[box-shadow:inset_0_0_0_1px_var(--link-hover-border)]";
+---
+
+<button
+  id="site-theme-toggle"
+  type="button"
+  class="site-theme-toggle group relative inline-grid aspect-square w-11 cursor-pointer place-items-center rounded-full border border-[var(--toggle-border)] bg-[var(--toggle-background)] text-[var(--toggle-text)] [box-shadow:var(--toggle-shadow)] backdrop-blur-[12px] transition-[transform,background-color,border-color,color] duration-[160ms] hover:-translate-y-px hover:scale-[1.03] hover:border-[var(--link-hover-border)] hover:bg-[var(--link-hover-background)] hover:text-[var(--link-hover-text)] focus-visible:[outline:3px_solid_var(--focus-ring)] focus-visible:outline-offset-[3px]"
+  aria-label="Choose theme"
+  aria-expanded="false"
+  aria-controls="site-theme-dialog"
+  aria-haspopup="dialog"
+>
+  <span class="text-[1.2rem] font-bold leading-none" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      focusable="false"
+    >
+      <title data-i18n-theme-palette>{translations.themePalette}</title>
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" stroke="none" />
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" stroke="none" />
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" stroke="none" />
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" stroke="none" />
+      <path
+        d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.6-1.4-.4-.4-.6-.9-.6-1.4 0-1.1.9-2 2-2H17a5 5 0 0 0 5-5c0-4.4-4.5-8.2-10-8.2Z"
+      />
+    </svg>
+  </span>
+  <span
+    class="pointer-events-none invisible absolute right-0 top-[calc(100%+0.5rem)] inline-flex w-max -translate-y-[0.15rem] items-center gap-[0.15rem] whitespace-nowrap rounded-[0.4rem] border border-[var(--toggle-border)] bg-[var(--toggle-background)] px-2 py-[0.35rem] text-xs font-semibold leading-none text-[var(--toggle-text)] opacity-0 [box-shadow:var(--toggle-shadow)] transition-[opacity,transform,visibility] duration-[120ms] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
+    aria-hidden="true"
+  >
+    <span data-site-theme-tooltip></span>
+  </span>
+</button>
+
+<dialog
+  id="site-theme-dialog"
+  class="site-theme-dialog m-auto overflow-hidden rounded-[1.125rem] border border-[var(--toggle-border)] bg-[var(--page-background)] p-0 text-[var(--page-text)] [box-shadow:0_24px_80px_rgb(0_0_0_/_0.28)] [inline-size:min(62rem,calc(100vw-1.5rem))] [max-block-size:min(48rem,calc(100dvh-2rem))] isolate"
+  aria-labelledby="site-theme-dialog-heading"
+>
+  <div
+    class="site-theme-dialog-scroll relative z-0 overflow-auto overscroll-contain bg-[var(--page-background)] [max-block-size:min(48rem,calc(100dvh-2rem))] isolate"
+  >
+    <div
+      class="site-theme-dialog-sticky sticky top-0 z-30 rounded-t-[calc(1.125rem-1px)] bg-[var(--page-background)] px-6 pt-6 pb-[0.875rem] [box-shadow:0_0.65rem_0.9rem_-0.7rem_rgb(0_0_0_/_0.36)] isolate max-[699px]:px-4 max-[699px]:pt-4 max-[699px]:pb-3"
+    >
+      <div class="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h2
+            id="site-theme-dialog-heading"
+            class="m-0 text-xl font-bold leading-[1.5]"
+            data-i18n-theme-modal-title
+          >
+            {translations.title}
+          </h2>
+          <p
+            class="mt-[0.2rem] mb-0 text-sm leading-[1.45] text-[var(--readme-muted)]"
+            data-i18n-theme-modal-description
+          >
+            {translations.description}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="site-theme-dialog-close inline-grid size-11 min-w-11 cursor-pointer place-items-center rounded-lg border border-[var(--toggle-border)] bg-[var(--link-background)] p-0 text-2xl leading-none text-[var(--page-text)] focus-visible:[outline:3px_solid_var(--focus-ring)] focus-visible:outline-offset-2"
+          aria-label="Close theme selector"
+          data-site-theme-dialog-close
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="site-theme-dialog-toolbar">
+        <div
+          class="mb-4 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-3 max-[699px]:grid-cols-1"
+        >
+          <fieldset class="m-0 min-w-0 border-0 p-0">
+            <legend
+              class="mb-[0.4rem] p-0 text-[0.8rem] font-bold text-[var(--page-text)]"
+              data-i18n-theme-modal-mode
+            >
+              {translations.mode}
+            </legend>
+            <div class="flex flex-nowrap gap-[0.4rem]">
+              <button
+                type="button"
+                class={controlButtonClass}
+                data-site-theme-mode="light"
+                aria-pressed="false"
+              >
+                Light
+              </button>
+              <button
+                type="button"
+                class={controlButtonClass}
+                data-site-theme-mode="dark"
+                aria-pressed="false"
+              >
+                Dark
+              </button>
+            </div>
+          </fieldset>
+
+          {showStyleControls && (
+  <fieldset class="m-0 min-w-0 border-0 p-0">
+    <legend
+      class="mb-[0.4rem] p-0 text-[0.8rem] font-bold text-[var(--page-text)]"
+      data-i18n-theme-modal-style
+    >
+      {translations.style}
+    </legend>
+    <div class="flex flex-wrap gap-[0.4rem]">
+      {styleNames.map((styleName: string) => (
+        <button
+          type="button"
+          class={controlButtonClass}
+          data-site-theme-style={styleName}
+          aria-pressed="false"
+        >
+          {themeLbl(styleName)}
+        </button>
+      ))}
+    </div>
+  </fieldset>
+)}
+        </div>
+
+        <label
+          class="mb-[0.4rem] block text-sm font-semibold text-[var(--page-text)]"
+          for="site-theme-search"
+          data-i18n-theme-modal-search
+        >
+          {translations.searchThemes}
+        </label>
+        <input
+          id="site-theme-search"
+          class="site-theme-dialog-search min-h-11 w-full rounded-lg border border-[var(--toggle-border)] bg-[var(--link-background)] px-3 py-[0.65rem] text-[var(--page-text)] outline-none focus:[outline:3px_solid_var(--focus-ring)] focus:outline-offset-2"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          aria-controls="site-theme-options"
+        >
+      </div>
+    </div>
+
+    <div class="relative z-0 px-6 pb-6 max-[699px]:px-4 max-[699px]:pb-4">
+      <div
+        id="site-theme-options"
+        class="mt-4 grid grid-cols-2 gap-3 p-0.5 max-[699px]:grid-cols-1"
+      >
+        {names.map((name: string) => (
+  <button
+    type="button"
+    class="site-theme-option flex min-w-0 cursor-pointer flex-col gap-[0.7rem] rounded-xl border border-[var(--toggle-border)] bg-[var(--link-background)] p-3 text-start text-[var(--page-text)] transition-[background-color,border-color,box-shadow,transform] duration-[160ms] hover:-translate-y-px hover:border-[var(--link-hover-border)] hover:bg-[var(--link-hover-background)] focus-visible:[outline:3px_solid_var(--focus-ring)] focus-visible:outline-offset-2 aria-pressed:border-[var(--link-hover-border)] aria-pressed:[box-shadow:inset_0_0_0_1px_var(--link-hover-border)]"
+    data-site-theme-option={name}
+    data-site-theme-search={`${themeLbl(name)} ${name}`}
+    aria-pressed="false"
+  >
+    <span class="flex items-center justify-between gap-3">
+      <span class="grid min-w-0 gap-[0.05rem]">
+        <strong class="overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] leading-[1.3] text-[var(--page-text)]">
+          {themeLbl(name)}
+        </strong>
+        <small class="overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.68rem] leading-[1.3] text-[var(--readme-muted)]">
+          {name}
+        </small>
+      </span>
+      <span
+        class="site-theme-option-selected inline-grid size-[1.45rem] shrink-0 place-items-center rounded-full border border-[var(--toggle-border)] text-xs font-extrabold text-transparent"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+    </span>
+
+    <span
+      class="site-theme-preview block min-h-[11.5rem] overflow-hidden rounded-[0.6rem] border border-[var(--details-border)] bg-[var(--page-background)] p-[0.9rem] font-sans text-[var(--page-text)] [box-shadow:inset_0_0_0_1px_rgb(127_127_127_/_0.04)] pointer-events-none"
+      data-site-theme-preview={name}
+      aria-hidden="true"
+    >
+      <span class="site-theme-preview-style-layer" aria-hidden="true"></span>
+      <span class="relative z-[1] grid justify-items-center text-center">
+        <img
+          class="block size-12 rounded-full border border-[var(--link-border)] bg-[var(--link-background)] object-cover [box-shadow:var(--link-shadow)]"
+          src={imageUrl}
+          alt=""
+          width="160"
+          height="160"
+          loading="lazy"
+        />
+        {tagline && (
+          <small
+            class="mt-[0.4rem] max-w-[90%] text-[0.56rem] font-medium leading-[1.3] text-[var(--tagline-text)]"
+            data-i18n-tagline
+          >
+            {tagline.trim()}
+          </small>
+        )}
+      </span>
+
+      <span class="relative z-[1] mt-[0.7rem] grid gap-[0.34rem] border-t border-[var(--readme-border)] pt-[0.68rem] text-[0.56rem] leading-[1.45] text-[var(--readme-text)]">
+        <strong
+          class="text-[0.72rem] leading-[1.2] text-[var(--readme-heading)]"
+          data-i18n-theme-modal-preview-title
+        >
+          {translations.previewTitle}
+        </strong>
+        <span
+          data-i18n-theme-modal-preview-body
+          set:html={translations.previewHTML}
+        />
+        <span class="mt-[0.05rem] grid gap-[0.1rem] rounded-[0.3rem] border border-[var(--readme-border)] bg-[var(--code-background)] px-2 py-[0.42rem] font-mono text-[0.5rem] leading-[1.4] text-[var(--code-text)]">
+          <span>
+            <b class="font-semibold text-[var(--syntax-keyword)]">const</b>{" "}
+            <i class="not-italic text-[var(--syntax-variable)]">theme</i> ={" "}
+            <em class="not-italic text-[var(--syntax-string)]">"{name}"</em>
+            <span>;</span>
+          </span>
+        </span>
+      </span>
+    </span>
+  </button>
+))}
+      </div>
+
+      <p
+        class="mt-4 text-sm text-[var(--readme-muted)]"
+        data-site-theme-empty
+        hidden
+      >
+        No themes found
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const button: HTMLElement | null = document.getElementById("site-theme-toggle");
+const root: HTMLElement = document.documentElement;
+const dataElement: HTMLElement | null =
+  document.getElementById("all-theme-data");
+const dialog: HTMLDialogElement | null =
+  document.querySelector<HTMLDialogElement>("#site-theme-dialog");
+
+if (button instanceof HTMLButtonElement && dataElement && dialog) {
+  try {
+    const payload: { names?: unknown } = JSON.parse(
+      dataElement.textContent ?? "{}",
+    );
+    const names: string[] = Array.isArray(payload.names)
+      ? payload.names.filter(
+          (name: unknown): name is string =>
+            typeof name === "string" && Boolean(name.trim()),
+        )
+      : [];
+    const tooltip: HTMLElement | null = button.querySelector(
+      "[data-site-theme-tooltip]",
+    );
+    const search: HTMLInputElement | null =
+      dialog.querySelector<HTMLInputElement>("#site-theme-search");
+    const empty: HTMLElement | null = dialog.querySelector<HTMLElement>(
+      "[data-site-theme-empty]",
+    );
+    const closeButton: HTMLButtonElement | null =
+      dialog.querySelector<HTMLButtonElement>("[data-site-theme-dialog-close]");
+    const stickyHeader: HTMLElement | null = dialog.querySelector<HTMLElement>(
+      ".site-theme-dialog-sticky",
+    );
+    const scrollViewport: HTMLElement | null =
+      dialog.querySelector<HTMLElement>(".site-theme-dialog-scroll");
+    const options: HTMLButtonElement[] = Array.from(
+      dialog.querySelectorAll<HTMLButtonElement>("[data-site-theme-option]"),
+    );
+    const modeButtons: HTMLButtonElement[] = Array.from(
+      dialog.querySelectorAll<HTMLButtonElement>("[data-site-theme-mode]"),
+    );
+    const styleButtons: HTMLButtonElement[] = Array.from(
+      dialog.querySelectorAll<HTMLButtonElement>("[data-site-theme-style]"),
+    );
+    const previews: HTMLElement[] = Array.from(
+      dialog.querySelectorAll<HTMLElement>("[data-site-theme-preview]"),
+    );
+
+    const previewPatternMinScale: Record<string, number> = {
+      blueprint: 0.58,
+      grain: 0.9,
+      grid: 0.58,
+      halftone: 0.72,
+    };
+
+    const syncPreviewScale = (): void => {
+      // Scene-like styles use a true page-width miniature. Very small tiled
+      // patterns need a minimum scale so their 1px lines/dots stay legible.
+      const pageWidth: number = Math.max(
+        document.documentElement.clientWidth,
+        1,
+      );
+      const minPatternScale: number = previewStyle
+        ? (previewPatternMinScale[previewStyle] ?? 0)
+        : 0;
+
+      for (const preview of previews) {
+        const previewWidth: number = preview.clientWidth;
+        const previewHeight: number = preview.clientHeight;
+        if (!previewWidth || !previewHeight) continue;
+
+        const widthScale: number = Math.min(1, previewWidth / pageWidth);
+        const scale: number = Math.max(widthScale, minPatternScale);
+        const sourceWidth: number = previewWidth / scale;
+        const sourceHeight: number = previewHeight / scale;
+
+        preview.style.setProperty(
+          "--site-style-preview-source-width",
+          `${sourceWidth}px`,
+        );
+        preview.style.setProperty(
+          "--site-style-preview-source-height",
+          `${sourceHeight}px`,
+        );
+        preview.style.setProperty("--site-style-preview-scale", String(scale));
+      }
+    };
+
+    const syncLabel = (): void => {
+      const current: string = root.dataset.siteTheme ?? names[0] ?? "";
+      const label: string = current ? `${current.toLowerCase()}` : "theme";
+      button.setAttribute(
+        "aria-label",
+        current ? `Choose theme. Current theme: ${current}.` : "Choose theme",
+      );
+      if (tooltip) tooltip.textContent = label;
+
+      for (const option of options) {
+        option.setAttribute(
+          "aria-pressed",
+          String(option.dataset.siteThemeOption === current),
+        );
+      }
+    };
+
+    let previewMode: "light" | "dark" = root.classList.contains("dark")
+      ? "dark"
+      : "light";
+    let previewStyle: string = root.dataset.themeStyle ?? "";
+
+    const syncPreviewMode = (): void => {
+      dialog.dataset.previewMode = previewMode;
+      for (const modeButton of modeButtons) {
+        modeButton.setAttribute(
+          "aria-pressed",
+          String(modeButton.dataset.siteThemeMode === previewMode),
+        );
+      }
+    };
+
+    const syncPreviewStyle = (): void => {
+      if (previewStyle) dialog.dataset.previewStyle = previewStyle;
+      else delete dialog.dataset.previewStyle;
+
+      for (const styleButton of styleButtons) {
+        styleButton.setAttribute(
+          "aria-pressed",
+          String(styleButton.dataset.siteThemeStyle === previewStyle),
+        );
+      }
+
+      syncPreviewScale();
+    };
+
+    const resetPreviewControls = (): void => {
+      previewMode = root.classList.contains("dark") ? "dark" : "light";
+      previewStyle = root.dataset.themeStyle ?? "";
+      syncPreviewMode();
+      syncPreviewStyle();
+    };
+
+    const filterOptions = (): void => {
+      const query: string = (search?.value ?? "").toLowerCase().trim();
+      let visible: number = 0;
+
+      for (const option of options) {
+        const searchText: string = (
+          option.dataset.siteThemeSearch ??
+          option.dataset.siteThemeOption ??
+          ""
+        ).toLowerCase();
+        option.hidden = Boolean(query) && !searchText.includes(query);
+        if (!option.hidden) visible += 1;
+      }
+
+      if (empty) empty.hidden = visible > 0;
+    };
+
+    syncLabel();
+    syncPreviewMode();
+    syncPreviewStyle();
+
+    button.addEventListener("click", (): void => {
+      if (search) search.value = "";
+      filterOptions();
+      syncLabel();
+      resetPreviewControls();
+      dialog.showModal();
+      requestAnimationFrame(syncPreviewScale);
+      root.classList.add("site-theme-dialog-open");
+      button.setAttribute("aria-expanded", "true");
+
+      const current: string = root.dataset.siteTheme ?? names[0] ?? "";
+      const currentOption: HTMLButtonElement | undefined = options.find(
+        (option: HTMLButtonElement): boolean =>
+          option.dataset.siteThemeOption === current,
+      );
+
+      if (currentOption) {
+        requestAnimationFrame((): void => {
+          const viewportBox: DOMRect =
+            scrollViewport?.getBoundingClientRect() ??
+            dialog.getBoundingClientRect();
+          const optionBox: DOMRect = currentOption.getBoundingClientRect();
+          const stickyHeight: number =
+            stickyHeader?.getBoundingClientRect().height ?? 0;
+          const visibleTop: number = viewportBox.top + stickyHeight;
+          const visibleCenter: number =
+            visibleTop + (viewportBox.bottom - visibleTop) / 2;
+          const optionCenter: number = optionBox.top + optionBox.height / 2;
+
+          if (scrollViewport) {
+            scrollViewport.scrollTop += optionCenter - visibleCenter;
+          }
+          currentOption.focus({ preventScroll: true });
+        });
+      } else {
+        search?.focus();
+      }
+    });
+
+    for (const modeButton of modeButtons) {
+      modeButton.addEventListener("click", (): void => {
+        const mode: string = modeButton.dataset.siteThemeMode ?? "";
+        if (mode !== "light" && mode !== "dark") return;
+        previewMode = mode;
+        syncPreviewMode();
+      });
+    }
+
+    for (const styleButton of styleButtons) {
+      styleButton.addEventListener("click", (): void => {
+        const style: string = styleButton.dataset.siteThemeStyle ?? "";
+        if (!style) return;
+        previewStyle = style;
+        syncPreviewStyle();
+      });
+    }
+
+    for (const option of options) {
+      option.addEventListener("click", (): void => {
+        const theme: string = option.dataset.siteThemeOption ?? "";
+        if (!theme || !names.includes(theme)) return;
+
+        window.dispatchEvent(
+          new CustomEvent("site-theme-select", { detail: { theme } }),
+        );
+        dialog.close();
+      });
+    }
+
+    search?.addEventListener("input", filterOptions);
+    closeButton?.addEventListener("click", (): void => dialog.close());
+
+    dialog.addEventListener("close", (): void => {
+      root.classList.remove("site-theme-dialog-open");
+      button.setAttribute("aria-expanded", "false");
+      button.focus();
+    });
+
+    dialog.addEventListener("click", (event: MouseEvent): void => {
+      if (event.target !== dialog) return;
+      const box: DOMRect = dialog.getBoundingClientRect();
+      if (
+        event.clientX < box.left ||
+        event.clientX > box.right ||
+        event.clientY < box.top ||
+        event.clientY > box.bottom
+      ) {
+        dialog.close();
+      }
+    });
+
+    const previewResizeObserver: ResizeObserver = new ResizeObserver(
+      syncPreviewScale,
+    );
+    if (scrollViewport) previewResizeObserver.observe(scrollViewport);
+
+    window.addEventListener("resize", syncPreviewScale);
+    window.addEventListener("site-theme-change", syncLabel);
+    window.addEventListener("pageshow", (): void => {
+      syncLabel();
+      resetPreviewControls();
+    });
+  } catch (error) {
+    console.error("Failed to initialize theme switcher:", error);
+  }
+}
+</script>

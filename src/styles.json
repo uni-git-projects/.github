@@ -1,0 +1,44 @@
+{
+  "aurora": {
+    "bg": "radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--readme-link) 28%, transparent), transparent 34rem), radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--syntax-function) 24%, transparent), transparent 36rem), radial-gradient(circle at 55% 85%, color-mix(in srgb, var(--syntax-tag) 18%, transparent), transparent 32rem), radial-gradient(circle at 25% 78%, color-mix(in srgb, var(--syntax-string) 16%, transparent), transparent 28rem), var(--page-background)"
+  },
+  "blueprint": {
+    "bg": "linear-gradient(color-mix(in srgb, var(--readme-link) 10%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--readme-link) 10%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--readme-link) 22%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--readme-link) 22%, transparent) 1px, transparent 1px), var(--page-background)",
+    "bgSize": "20px 20px, 20px 20px, 100px 100px, 100px 100px, auto",
+    "bgPos": "0 0, 0 0, 0 0, 0 0, 0 0"
+  },
+  "crosshatch": {
+    "bg": "repeating-linear-gradient(45deg, color-mix(in srgb, var(--details-border) 38%, transparent) 0 1px, transparent 1px 12px), repeating-linear-gradient(-45deg, color-mix(in srgb, var(--details-border) 24%, transparent) 0 1px, transparent 1px 12px), var(--page-background)"
+  },
+  "gradient": {
+    "bg": "linear-gradient(135deg, color-mix(in srgb, var(--page-background) 72%, white) 0%, var(--page-background) 50%, color-mix(in srgb, var(--page-background) 80%, black) 100%)"
+  },
+  "grain": {
+    "bg": "radial-gradient(circle, color-mix(in srgb, var(--page-text) 9%, transparent) 0 0.6px, transparent 0.75px), radial-gradient(circle, color-mix(in srgb, var(--readme-muted) 8%, transparent) 0 0.55px, transparent 0.7px), radial-gradient(circle, color-mix(in srgb, var(--readme-heading) 6%, transparent) 0 0.45px, transparent 0.6px), var(--page-background)",
+    "bgSize": "7px 9px, 11px 13px, 17px 19px, auto",
+    "bgPos": "0 0, 3px 5px, 8px 2px, 0 0"
+  },
+  "grid": {
+    "bg": "linear-gradient(var(--details-border) 1px, transparent 1px), linear-gradient(90deg, var(--details-border) 1px, transparent 1px), var(--page-background)",
+    "bgSize": "32px 32px"
+  },
+  "glow": {
+    "bg": "radial-gradient(circle at top, var(--page-glow), transparent 28rem), var(--page-background)"
+  },
+  "halftone": {
+    "bg": "radial-gradient(circle, color-mix(in srgb, var(--readme-link) 28%, transparent) 0 1.25px, transparent 1.4px), radial-gradient(circle, color-mix(in srgb, var(--page-text) 12%, transparent) 0 0.7px, transparent 0.85px), var(--page-background)",
+    "bgSize": "16px 16px, 8px 8px, auto",
+    "bgPos": "0 0, 4px 4px, 0 0"
+  },
+  "solid": {
+    "bg": "var(--page-background)"
+  },
+  "spotlight": {
+    "bg": "radial-gradient(ellipse 58% 38% at 50% 4%, color-mix(in srgb, var(--readme-link) 26%, transparent), transparent 72%), radial-gradient(ellipse 34% 22% at 50% 0%, color-mix(in srgb, var(--page-text) 9%, transparent), transparent 82%), var(--page-background)"
+  },
+  "stars": {
+    "bg": "radial-gradient(circle, color-mix(in srgb, var(--page-text) 95%, transparent) 0 0.72px, transparent 0.96px), radial-gradient(circle, color-mix(in srgb, var(--page-text) 82%, transparent) 0 1.02px, transparent 1.3px), radial-gradient(circle, color-mix(in srgb, rgb(214 235 255) 72%, transparent) 0 1.14px, transparent 1.42px), radial-gradient(circle, color-mix(in srgb, rgb(255 244 214) 68%, transparent) 0 1.08px, transparent 1.38px), radial-gradient(circle, color-mix(in srgb, rgb(255 214 163) 46%, transparent) 0 1.22px, transparent 1.58px), radial-gradient(circle, color-mix(in srgb, rgb(255 188 188) 28%, transparent) 0 1.06px, transparent 1.42px), radial-gradient(circle, color-mix(in srgb, var(--page-text) 44%, transparent) 0 1.9px, transparent 2.3px), radial-gradient(circle, color-mix(in srgb, var(--readme-muted) 46%, transparent) 0 0.46px, transparent 0.7px), radial-gradient(ellipse at 20% 72%, color-mix(in srgb, rgb(180 215 255) 8%, transparent) 0%, transparent 58%), radial-gradient(ellipse at 76% 30%, color-mix(in srgb, rgb(214 193 255) 7%, transparent) 0%, transparent 56%), linear-gradient(115deg, transparent 0%, transparent 31%, color-mix(in srgb, rgb(235 240 255) 4%, transparent) 41%, color-mix(in srgb, rgb(188 220 255) 8%, transparent) 48%, color-mix(in srgb, rgb(255 244 214) 6%, transparent) 52%, color-mix(in srgb, rgb(214 193 255) 6%, transparent) 58%, transparent 69%, transparent 100%), radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--page-glow) 16%, transparent), transparent 34rem), var(--page-background)",
+    "bgSize": "167px 223px, 277px 217px, 353px 301px, 317px 281px, 431px 337px, 503px 389px, 541px 467px, 193px 257px, 100% 100%, 100% 100%, 100% 100%, auto, auto",
+    "bgPos": "13px 29px, 97px 41px, 29px 147px, 171px 79px, 183px 101px, 73px 211px, 127px 173px, 139px 67px, 0 0, 0 0, 0 0, 50% 0, 0 0"
+  }
+}
