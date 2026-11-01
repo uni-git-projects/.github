@@ -8,7 +8,7 @@ Overall, my average project performance is distinction, with an average personal
 
 [![Overview](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/overview.svg)](https://github.com/profile-icons/github-stats-mod)  [![Languages](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/languages.svg)](https://github.com/profile-icons/github-stats-mod)
 
-### Project Repositories
+### Project Repositories (WIP)
 
 The following are examples from over **100** `.git` projects, most completed well pre-GenAI (& rather all perfectly  
 under the most-least of ideal circumstances), many involving extensive collaboration, & all averaging with distinction.
