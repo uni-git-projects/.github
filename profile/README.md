@@ -10,7 +10,7 @@ I write this retrospectively on a spur not to gloat, which I assume the statisti
 
 [![Overview](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/overview.svg)](https://github.com/profile-icons/github-stats-mod)  [![Languages](https://raw.githubusercontent.com/uni-git-projects/github-stats-mod/refs/heads/generated/languages.svg)](https://github.com/profile-icons/github-stats-mod)
 
-I also assisted in teaching over 1000 students in advanced software engineering, (Agile) project management, software testing, machine learning, data mining, data engineering & cybersecurity, & won awards in top performance from the start, but not before entering as I left; more than twice the requirements for less than half the time & rights.  
+I also assisted in teaching over 1000 students in advanced software engineering, (Agile) project management, software testing, machine learning, data mining, data engineering & cybersecurity, & won awards for top performance from the start, but not before entering as I left; more than twice the requirements at advanced level for less than half the rights & time at the lowest of circumstances consistently. 
 
 ### Project Repositories (WIP)
 
