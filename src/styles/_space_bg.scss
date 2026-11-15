@@ -1,0 +1,6 @@
+@mixin stars-style-background {
+  background: var(--stars-style-background, #081225);
+  background-size: var(--stars-style-background-size, cover);
+  background-position: var(--stars-style-background-position, center);
+  background-repeat: repeat;
+}

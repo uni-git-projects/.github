@@ -1,0 +1,28 @@
+---
+import { githubAvatarUrl, siteConfig } from "../config";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const { tabName, language, theme, style } = siteConfig;
+const title: string = `Page not found — ${tabName}`;
+---
+
+<BaseLayout
+  title={title}
+  description="The requested page could not be found."
+  imageUrl={githubAvatarUrl}
+  imageAlt={`${tabName}'s GitHub profile photo`}
+  language={language}
+  theme={theme}
+  style={style}
+  isNoindex
+>
+  <main class="v-404-1">
+    <div>
+      <p class="v-404-2">404</p>
+
+      <h1 class="v-404-3">Page not found</h1>
+
+      <a href={import.meta.env.BASE_URL} class="v-404-4"> Return home </a>
+    </div>
+  </main>
+</BaseLayout>

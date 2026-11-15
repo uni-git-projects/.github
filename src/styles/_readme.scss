@@ -1,0 +1,304 @@
+@mixin styles {
+  .gh-readme {
+    display: flow-root;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: var(--readme-text);
+  }
+
+  .gh-readme :where(a):not(:where(:is(h1, h2, h3, h4, h5, h6) *)) {
+    color: var(--readme-link);
+  }
+
+  .gh-readme :where(a):not(:where(:is(h1, h2, h3, h4, h5, h6) *)):hover {
+    color: var(--readme-link-hover);
+  }
+
+  .gh-readme :where(hr) {
+    border-color: var(--readme-border);
+  }
+
+  .gh-readme :where(blockquote) {
+    color: var(--readme-blockquote-text);
+    border-left-color: var(--readme-blockquote-border);
+  }
+
+  .gh-readme :where(table tr) {
+    border-color: var(--readme-border);
+  }
+
+  .gh-readme :where(table tr:nth-child(2n)) {
+    background: var(--readme-table-row-alt);
+  }
+
+  .gh-readme :where(th, td) {
+    border-color: var(--readme-border);
+  }
+
+  .gh-readme :where(kbd) {
+    border: 1px solid var(--readme-kbd-border);
+    background: var(--readme-kbd-background);
+    color: var(--readme-kbd-text);
+    box-shadow: inset 0 -1px 0 var(--readme-kbd-border);
+  }
+
+  .gh-readme :where(mark) {
+    background: var(--readme-mark-background);
+    color: inherit;
+  }
+
+  .gh-readme
+    :where(
+      .anchor,
+      :is(h1, h2, h3, h4, h5, h6) > a:first-child:empty,
+      :is(h1, h2, h3, h4, h5, h6) .icon-link
+    ) {
+    display: none !important;
+  }
+
+  .gh-readme :where(h1, h2, h3, h4, h5, h6) a {
+    color: inherit;
+    text-decoration: none;
+    pointer-events: none;
+  }
+
+  .gh-readme :where(p > a > img, p > img) {
+    display: inline-block;
+    margin: 0.15rem 0.1rem;
+    vertical-align: middle;
+  }
+
+  .gh-readme p:has(> a > img[alt*="pin img"]) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    margin-block: 1.25rem;
+  }
+
+  html[dir="rtl"] .gh-readme a {
+    unicode-bidi: isolate;
+  }
+
+  .gh-readme p:has(> a > img[alt*="pin img"]) > a {
+    display: block;
+    min-width: 0;
+    line-height: 0;
+    text-decoration: none;
+  }
+
+  .gh-readme p:has(> a > img[alt*="pin img"]) > a > img {
+    display: block;
+    width: 100%;
+    max-width: 412px;
+    margin-inline: auto;
+  }
+
+  .gh-readme :where(input[type="checkbox"]) {
+    margin-right: 0.45rem;
+  }
+
+  .gh-readme :where(details) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .gh-readme :where(summary) {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .gh-readme :where(table) {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  html[data-readme-image-theme="light"]
+    .gh-readme
+    :is(img[src*=".svg"], img[data-i18n-svg-source]) {
+    color-scheme: light;
+  }
+
+  html[data-readme-image-theme="dark"]
+    .gh-readme
+    :is(img[src*=".svg"], img[data-i18n-svg-source]) {
+    color-scheme: dark;
+  }
+
+  html[data-readme-image-theme="light"]
+    .gh-readme
+    :is(
+      img[src*="#gh-dark-mode-only"],
+      img[data-gh-theme-only="dark"],
+      a:has(> img[src*="#gh-dark-mode-only"]),
+      a:has(> img[data-gh-theme-only="dark"])
+    ),
+  html[data-readme-image-theme="dark"]
+    .gh-readme
+    :is(
+      img[src*="#gh-light-mode-only"],
+      img[data-gh-theme-only="light"],
+      a:has(> img[src*="#gh-light-mode-only"]),
+      a:has(> img[data-gh-theme-only="light"])
+    ) {
+    display: none !important;
+  }
+
+  .gh-readme :where(.highlight, .snippet-clipboard-content) {
+    margin-block: 1.25rem;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .gh-readme :where(pre) {
+    position: relative !important;
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--details-border);
+    border-radius: 0.5rem;
+    background: var(--code-background);
+    color: var(--code-text);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .gh-readme :where(pre > code) {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .gh-readme :where(:not(pre) > code) {
+    margin: 0;
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    background: var(--inline-code-background);
+    color: var(--code-text);
+    font-size: 85%;
+    white-space: break-spaces;
+  }
+
+  .gh-readme :where(code)::before,
+  .gh-readme :where(code)::after {
+    content: "" !important;
+  }
+
+  .gh-readme .pl-c {
+    color: var(--syntax-comment);
+    font-style: italic;
+  }
+
+  .gh-readme .pl-k {
+    color: var(--syntax-keyword);
+    font-weight: 600;
+  }
+
+  .gh-readme :is(.pl-s, .pl-pds) {
+    color: var(--syntax-string);
+  }
+
+  .gh-readme .pl-en {
+    color: var(--syntax-function);
+  }
+
+  .gh-readme .pl-e {
+    color: var(--syntax-entity);
+  }
+
+  .gh-readme :is(.pl-v, .pl-c1, .pl-smi) {
+    color: var(--syntax-variable);
+  }
+
+  .gh-readme .pl-ent {
+    color: var(--syntax-tag);
+  }
+
+  .gh-readme .pl-s1 {
+    color: var(--code-text);
+  }
+
+  .gh-readme blockquote {
+    quotes: none;
+  }
+
+  .gh-readme blockquote p:first-of-type::before,
+  .gh-readme blockquote p:last-of-type::after {
+    content: none !important;
+  }
+
+  .gh-readme {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+  .gh-readme :where(h1, h2, h3, h4, h5, h6) {
+    margin: 1.5em 0 0.75em;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--readme-heading);
+  }
+  .gh-readme :where(h1) {
+    font-size: 2.25em;
+  }
+  .gh-readme :where(h2) {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--readme-border);
+  }
+  .gh-readme :where(h3) {
+    font-size: 1.25em;
+  }
+  .gh-readme :where(h4) {
+    font-size: 1em;
+  }
+  .gh-readme :where(p, ul, ol, blockquote, pre, table, figure, details) {
+    margin-block: 1.25em;
+  }
+  .gh-readme :where(ul, ol) {
+    padding-inline-start: 1.625em;
+  }
+  .gh-readme :where(ul) {
+    list-style-type: disc;
+  }
+  .gh-readme :where(ol) {
+    list-style-type: decimal;
+  }
+  .gh-readme :where(li) {
+    padding-inline-start: 0.375em;
+  }
+  .gh-readme :where(li + li) {
+    margin-top: 0.25em;
+  }
+  .gh-readme :where(a) {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .gh-readme :where(blockquote) {
+    border-left: 0.25rem solid var(--readme-blockquote-border);
+    padding-inline-start: 1em;
+    font-style: italic;
+  }
+  .gh-readme :where(table) {
+    width: max-content;
+    border-collapse: collapse;
+  }
+  .gh-readme :where(th, td) {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--readme-border);
+  }
+  .gh-readme :where(th) {
+    font-weight: 600;
+  }
+  .gh-readme :where(img) {
+    max-width: 100%;
+    height: auto;
+  }
+}

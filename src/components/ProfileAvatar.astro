@@ -1,0 +1,32 @@
+---
+interface Props {
+  imageUrl: string;
+  profileUrl: string;
+  tabName: string | undefined;
+  tagline?: string;
+}
+
+const { imageUrl, profileUrl, tabName, tagline } = Astro.props;
+---
+
+<div class="star-wars-avatar-block ">
+  <div class="v-profileavatar-2">
+    <a href={profileUrl} class="group v-profileavatar-3">
+      <img
+        src={imageUrl}
+        alt={`${tabName}'s GitHub profile`}
+        width="240"
+        height="240"
+        loading="eager"
+        fetchpriority="high"
+        class="star-wars-avatar "
+      >
+    </a>
+  </div>
+
+  {tagline && (
+    <p class="v-profileavatar-5" data-i18n-tagline>
+      {tagline?.trim()}
+    </p>
+  )}
+</div>

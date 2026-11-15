@@ -1,0 +1,609 @@
+@use "space_bg" as space;
+
+.star-wars-profile {
+  position: relative;
+  min-height: 100dvh;
+  padding: 5.5rem max(1rem, calc((100% - 900px) / 2)) 4rem;
+  color: var(--page-text);
+}
+
+.star-wars-stars {
+  display: none;
+  pointer-events: none;
+}
+.star-wars-identity {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+.star-wars-identity-plane {
+  position: relative;
+}
+.star-wars-crawl-window {
+  position: relative;
+  z-index: 1;
+}
+.star-wars-crawl-plane {
+  position: relative;
+}
+.star-wars-crawl-motion {
+  position: relative;
+  width: 100%;
+}
+.star-wars-crawl-probe {
+  display: none;
+}
+.star-wars-controls {
+  position: fixed;
+  z-index: 999;
+  top: 0.85rem;
+  right: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  transform: none !important;
+  perspective: none !important;
+}
+.star-wars-controls > * {
+  flex-shrink: 0;
+}
+.star-wars-controls :is(.theme-toggle, .site-style-toggle):disabled {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+  transform: none !important;
+}
+.star-wars-controls button:disabled > span[aria-hidden="true"] {
+  display: none !important;
+}
+.star-wars-profile
+  :is(.site-theme-dialog, .site-style-dialog, .i18n-dialog):not([open]) {
+  display: none !important;
+  pointer-events: none !important;
+}
+.star-wars-pause-button {
+  display: none;
+}
+
+html:is([data-site-theme="star_wars"], [data-site-theme="stars"]) body {
+  background: #000 !important;
+}
+html:is([data-site-theme="star_wars"], [data-site-theme="stars"])
+  .star-wars-profile {
+  isolation: isolate;
+}
+html:is([data-site-theme="star_wars"], [data-site-theme="stars"])
+  .star-wars-stars {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background-color: #000;
+  background-image: var(--starfield-url);
+  background-position: center;
+  background-repeat: repeat;
+  background-size: 1920px 1080px;
+}
+html[data-site-theme="stars"] .star-wars-stars {
+  @include space.stars-style-background;
+}
+
+html[data-site-theme="stars"] .star-wars-profile {
+  color-scheme: dark;
+}
+
+html[data-site-theme="star_wars"] body {
+  overflow: hidden;
+}
+html[data-site-theme="star_wars"] .star-wars-profile {
+  --sw-gold: #ffe81f;
+  --sw-gold-light: #fff3a0;
+  --sw-perspective: 650px;
+  --sw-angle: 48deg;
+  --sw-crawl-angle: 34deg;
+  --page-background: #060604;
+  --page-text: #ffe81f;
+  --tagline-text: #ffe81f;
+  --toggle-background: rgb(0 0 0 / 0.86);
+  --toggle-border: rgb(255 232 31 / 0.58);
+  --toggle-text: #ffe81f;
+  --link-background: rgb(0 0 0 / 0.77);
+  --link-border: rgb(255 232 31 / 0.43);
+  --link-text: #ffe81f;
+  --link-hover-background: rgb(255 232 31 / 0.16);
+  --link-hover-border: #ffe81f;
+  --link-hover-text: #fff3a0;
+  --focus-ring: #ffe81f;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  color: var(--sw-gold);
+  color-scheme: dark;
+}
+html[data-site-theme="star_wars"] .star-wars-identity {
+  position: absolute;
+  z-index: 40;
+  top: clamp(3.65rem, 7vh, 5.2rem);
+  left: 50%;
+  width: min(88%, 860px);
+  margin: 0;
+  transform: translateX(-50%);
+  perspective: var(--sw-perspective);
+  perspective-origin: center;
+  isolation: isolate;
+}
+html[data-site-theme="star_wars"] .star-wars-identity-plane {
+  transform: rotateX(var(--sw-angle));
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+html[data-site-theme="star_wars"] .star-wars-avatar-block {
+  margin-bottom: 0.2rem;
+}
+html[data-site-theme="star_wars"] .star-wars-avatar-block > div {
+  margin-bottom: 0.25rem;
+}
+html[data-site-theme="star_wars"] img.star-wars-avatar {
+  width: clamp(76px, 11vh, 110px) !important;
+  height: clamp(76px, 11vh, 110px) !important;
+  border: 2px solid var(--sw-gold);
+  background: #090907;
+  box-shadow:
+    0 0 18px rgb(255 232 31 / 0.22),
+    0 0 0 4px #050505;
+}
+html[data-site-theme="star_wars"] .star-wars-identity [data-i18n-tagline] {
+  max-width: 47rem;
+  margin-inline: auto;
+  color: var(--sw-gold);
+  font-size: clamp(0.75rem, 1.7vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+html[data-site-theme="star_wars"] .star-wars-site-links {
+  width: 100%;
+  margin: 0.45rem auto 0.3rem;
+  gap: 0.35rem;
+}
+html[data-site-theme="star_wars"] .star-wars-site-links a {
+  width: clamp(1.85rem, 3vw, 2.25rem);
+  background: rgb(0 0 0 / 0.8);
+  border-color: rgb(255 232 31 / 0.46);
+  color: var(--sw-gold);
+}
+html[data-site-theme="star_wars"] .star-wars-org-badges {
+  justify-content: center;
+  margin-block: 0.55rem 0;
+  gap: 0.35rem;
+}
+html[data-site-theme="star_wars"] .star-wars-org-badges a {
+  border: 1px solid rgb(255 232 31 / 0.46);
+  background: rgb(0 0 0 / 0.82);
+  color: var(--sw-gold);
+  font-size: 0.75rem;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-identity
+  :is(.star-wars-org-badges a, .star-wars-site-links a):hover {
+  background: rgb(255 232 31 / 0.2);
+  border-color: #ffe81f;
+  color: #fff3a0;
+}
+
+html[data-site-theme="star_wars"] .star-wars-crawl-window {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  contain: layout paint style;
+  isolation: isolate;
+  clip-path: inset(var(--sw-crawl-cutoff, 45vh) 0 0 0);
+  pointer-events: none !important;
+  perspective: var(--sw-perspective);
+  perspective-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent var(--sw-crawl-cutoff, 45vh),
+    #000 calc(var(--sw-crawl-cutoff, 45vh) + 32px),
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent var(--sw-crawl-cutoff, 45vh),
+    #000 calc(var(--sw-crawl-cutoff, 45vh) + 32px),
+    #000 100%
+  );
+}
+html[data-site-theme="star_wars"]
+  .star-wars-profile:not([data-crawl-ready="true"])
+  .star-wars-crawl-window {
+  visibility: hidden;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-plane {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(var(--sw-crawl-angle));
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-motion {
+  --crawl-step: 1000px;
+  --crawl-duration: 23.256s;
+  --readme-text: #fbe65c;
+  --readme-heading: #ffe81f;
+  --readme-muted: #edd977;
+  --readme-link: #fff3a0;
+  --readme-link-hover: #fff;
+  --readme-border: rgb(255 232 31 / 0.46);
+  --readme-blockquote-text: #ffe678;
+  --readme-blockquote-border: #ffe81f;
+  --code-background: #141204;
+  --code-text: #ffe881;
+  position: absolute;
+  top: 88%;
+  left: 50%;
+  width: min(760px, 79vw);
+  margin: 0;
+  padding-bottom: 1px;
+  color: var(--sw-gold);
+  font-family: "Arial Black", "Trebuchet MS", Arial, sans-serif;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 750;
+  letter-spacing: 0.035em;
+  line-height: 1.64;
+  text-align: justify;
+  text-shadow: 0 0 1px rgb(255 232 31 / 0.42);
+  overflow-wrap: anywhere;
+  transform: translate3d(-50%, 0, 0);
+  animation: star-wars-crawl var(--crawl-duration) linear infinite;
+  will-change: transform;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-motion .gh-readme {
+  display: flow-root;
+  margin: 0;
+  width: 100%;
+  color: var(--readme-text);
+  font: inherit;
+  text-align: inherit;
+}
+
+html[data-site-theme="star_wars"] .star-wars-crawl-probe {
+  display: block;
+  position: absolute;
+  top: 88%;
+  left: 50%;
+  width: min(760px, 79vw);
+  height: 1px;
+  visibility: hidden;
+  pointer-events: none;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-probe-end {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--sw-gold);
+  font-family: inherit;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(p, li, blockquote) {
+  line-height: 1.62;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(strong, b) {
+  color: #fff3a0;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-motion .gh-readme a {
+  color: #fff3a0;
+}
+html[data-site-theme="star_wars"] .star-wars-crawl-window .gh-readme,
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-window
+  .gh-readme
+  :is(h1, h2, h3, h4, h5, h6)
+  a {
+  pointer-events: auto;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(
+    header,
+    nav,
+    footer,
+    [style*="position:fixed"],
+    [style*="position: fixed"],
+    [style*="position:sticky"],
+    [style*="position: sticky"]
+  ) {
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: auto !important;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(h1, h2, h3, h4, h5, h6) {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(img, svg, video) {
+  max-width: 100%;
+  height: auto;
+}
+html[data-site-theme="star_wars"]
+  .star-wars-crawl-motion
+  .gh-readme
+  :is(pre, table) {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.7em;
+  letter-spacing: normal;
+  text-align: left;
+  text-shadow: none;
+}
+@keyframes star-wars-crawl {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, calc(0px - var(--crawl-step)), 0);
+  }
+}
+html[data-site-theme="star_wars"]
+  .star-wars-profile[data-crawl-paused="true"]
+  .star-wars-crawl-motion {
+  animation-play-state: paused;
+}
+html[data-site-theme="star_wars"] .star-wars-pause-button {
+  position: fixed;
+  z-index: 1001;
+  top: 0.85rem;
+  left: 1rem;
+  right: auto;
+  bottom: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: 1px solid rgb(255 232 31 / 0.5);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.88);
+  color: #ffe81f;
+  cursor: pointer;
+  backdrop-filter: blur(7px);
+}
+html[data-site-theme="star_wars"] .star-wars-pause-button:hover {
+  border-color: #ffe81f;
+  background: #2c2607;
+}
+.star-wars-pause-button:focus-visible {
+  outline: 2px solid #ffe81f;
+  outline-offset: 3px;
+}
+.star-wars-pause-button svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+.star-wars-pause-button .star-wars-play-icon {
+  display: none;
+}
+.star-wars-profile[data-crawl-paused="true"] .star-wars-pause-button {
+  background: #2c2607;
+}
+.star-wars-profile[data-crawl-paused="true"]
+  .star-wars-pause-button
+  .star-wars-pause-icon {
+  display: none;
+}
+.star-wars-profile[data-crawl-paused="true"]
+  .star-wars-pause-button
+  .star-wars-play-icon {
+  display: block;
+}
+
+html[data-site-theme="star_wars"] .site-theme-dialog {
+  --page-background: #080806;
+  --page-text: #ffe81f;
+  --readme-muted: #dbc962;
+  --link-background: #171507;
+  --toggle-border: #70631e;
+  --link-hover-background: #35300a;
+  --link-hover-border: #ffe81f;
+  color-scheme: dark;
+}
+
+.site-theme-preview {
+  position: relative;
+  isolation: isolate;
+}
+.site-theme-preview[data-site-theme-preview="star_wars"],
+.site-theme-preview[data-site-theme-preview="stars"] {
+  background: #020411 !important;
+}
+.site-theme-preview:is(
+    [data-site-theme-preview="star_wars"],
+    [data-site-theme-preview="stars"]
+  )
+  .site-theme-preview-style-layer {
+  display: none !important;
+}
+.site-theme-preview:is(
+  [data-site-theme-preview="star_wars"],
+  [data-site-theme-preview="stars"]
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--starfield-url) center / 960px 540px repeat;
+  opacity: 0.93;
+}
+.site-theme-preview[data-site-theme-preview="stars"]::after {
+  @include space.stars-style-background;
+  transform: none;
+  opacity: 1;
+}
+.site-theme-preview:is(
+    [data-site-theme-preview="star_wars"],
+    [data-site-theme-preview="stars"]
+  )
+  > span.relative {
+  z-index: 1;
+}
+.site-theme-preview[data-site-theme-preview="star_wars"] > span.relative {
+  transform: perspective(200px) rotateX(18deg);
+}
+
+@media (max-width: 640px) {
+  .star-wars-controls {
+    left: 3.8rem;
+    right: 0.4rem;
+    top: 0.6rem;
+    justify-content: flex-end;
+    gap: 0.35rem;
+  }
+  .star-wars-profile {
+    padding-top: 5rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-profile {
+    --sw-perspective: 510px;
+    --sw-angle: 47deg;
+    --sw-crawl-angle: 33deg;
+    padding: 0;
+  }
+  html[data-site-theme="star_wars"] .star-wars-identity {
+    top: 5.8rem;
+    width: 91%;
+  }
+  html[data-site-theme="star_wars"] img.star-wars-avatar {
+    width: 79px !important;
+    height: 79px !important;
+  }
+  html[data-site-theme="star_wars"] .star-wars-site-links {
+    gap: 0.28rem;
+    margin-top: 0.3rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-site-links a {
+    width: 1.85rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-site-links svg {
+    width: 18px;
+    height: 18px;
+  }
+  html[data-site-theme="star_wars"] .star-wars-org-badges {
+    gap: 0.25rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-org-badges a {
+    padding: 0.14rem 0.35rem;
+    font-size: 0.66rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-org-badges img {
+    width: 20px;
+    height: 20px;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-motion {
+    width: 79vw;
+    font-size: 1.02rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-pause-button {
+    left: 0.6rem;
+    top: 0.6rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-site-theme="star_wars"] body {
+    overflow: auto;
+  }
+  html[data-site-theme="star_wars"] .star-wars-profile {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    padding: 5rem 1rem;
+  }
+  html[data-site-theme="star_wars"] .star-wars-identity {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 860px);
+    margin: 0 auto 2.5rem;
+    transform: none;
+    perspective: none;
+  }
+  html[data-site-theme="star_wars"] .star-wars-identity-plane {
+    transform: none;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-window {
+    position: relative;
+    inset: auto;
+    overflow: visible;
+    contain: none;
+    clip-path: none;
+    perspective: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-window * {
+    pointer-events: auto !important;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-plane {
+    position: relative;
+    transform: none;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-motion {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 760px);
+    margin: 0 auto;
+    transform: none !important;
+    animation: none !important;
+  }
+  html[data-site-theme="star_wars"] .star-wars-crawl-probe {
+    display: none;
+  }
+  html[data-site-theme="star_wars"] .star-wars-pause-button {
+    display: none;
+  }
+}

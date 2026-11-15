@@ -1,0 +1,245 @@
+---
+import "../style.scss";
+import "../styles/_star_wars.scss";
+import { siteConfig } from "../config";
+import type { ThemeModalTrans } from "../lib/i18n";
+import {
+  allStylesCSS,
+  resolveStyle,
+  type Style,
+  styleNames,
+} from "../lib/style";
+import {
+  allThemesCSS,
+  resolveTheme,
+  resolveThemeColor,
+  type ThemeType,
+  themeAccentCSS,
+  themeBackgrounds,
+  themeBG,
+  themeColorCSS,
+  themeColorTone,
+  themeNames,
+} from "../lib/theme";
+
+interface TransClient {
+  locale: string;
+  title: string;
+  tagline: string;
+  themeModal: ThemeModalTrans;
+  readmeHTML: string;
+  version?: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  url?: URL;
+  imageUrl?: string;
+  imageAlt?: string;
+  language?: string;
+  theme?: string;
+  themeColor?: string | undefined;
+  style?: string | undefined;
+  data?: Record<string, unknown>;
+  favUrl?: string | undefined;
+  isNoindex?: boolean;
+  locales?: string[];
+  srcTrans?: TransClient;
+  defLanguage?: string;
+}
+
+const {
+  title,
+  description,
+  url,
+  imageUrl,
+  imageAlt,
+  language = "en",
+  theme,
+  themeColor,
+  style,
+  data,
+  favUrl,
+  isNoindex = false,
+  locales = [],
+  srcTrans,
+  defLanguage = language,
+} = Astro.props;
+
+const baseUrl: string | undefined = url?.href;
+const gaId: string = siteConfig.gaId?.trim() ?? "";
+if (gaId && !/^G-[A-Z0-9]+$/.test(gaId)) {
+  throw new Error(`Invalid Google Analytics measurement ID: ${gaId}`);
+}
+const gaCode: string | undefined = gaId
+  ? `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', ${JSON.stringify(gaId)});`
+  : undefined;
+const themeSelection: ThemeType = resolveTheme(theme);
+const resolvedThemeColor: string | undefined = resolveThemeColor(themeColor);
+const styleSelection: Style = resolveStyle(style);
+const fixedThemeColor: string | undefined =
+  themeSelection.type === "default" ? resolvedThemeColor : undefined;
+const accentThemeColor: string | undefined =
+  themeSelection.type !== "default" ? resolvedThemeColor : undefined;
+const fixedThemeTone: "light" | "dark" | undefined = fixedThemeColor
+  ? themeColorTone(fixedThemeColor)
+  : undefined;
+const selectedThemeName: string =
+  themeSelection.type === "name" ? themeSelection.name : "abyss";
+const selectedStyleName: string =
+  styleSelection.type === "named" ? styleSelection.name : "solid";
+const availableThemes: string[] = themeNames();
+const availableStyles: string[] = styleNames();
+const themeCss: string = allThemesCSS(availableThemes);
+const themeColorInlineCss: string | undefined =
+  fixedThemeColor && fixedThemeTone
+    ? themeColorCSS(fixedThemeColor, fixedThemeTone, !selectedStyleName)
+    : accentThemeColor
+      ? themeAccentCSS(accentThemeColor)
+      : undefined;
+const themeStyleCss: string = allStylesCSS(availableStyles);
+const lightThemeColor: string | undefined =
+  resolvedThemeColor ??
+  (themeSelection.type !== "default"
+    ? themeBG(themeSelection.light)
+    : undefined);
+const darkThemeColor: string | undefined =
+  resolvedThemeColor ??
+  (themeSelection.type !== "default"
+    ? themeBG(themeSelection.dark)
+    : undefined);
+const allThemeData: string = JSON.stringify({
+  names: availableThemes,
+  defaultName: selectedThemeName,
+  colors: themeBackgrounds(availableThemes),
+  themeColor: resolvedThemeColor,
+}).replace(/</g, "\\u003c");
+const allStyleData: string = JSON.stringify({
+  names: availableStyles,
+  defaultName: selectedStyleName,
+}).replace(/</g, "\\u003c");
+const jsonLd: string | undefined = data
+  ? JSON.stringify(data).replace(/</g, "\\u003c")
+  : undefined;
+const transBase: string = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}i18n/`;
+const i18n: string | undefined =
+  locales.length > 1 && srcTrans
+    ? JSON.stringify({
+        defLanguage,
+        locales,
+        source: srcTrans,
+        transBase,
+      }).replace(/</g, "\\u003c")
+    : undefined;
+---
+
+<!doctype html>
+<html
+  lang={language}
+  data-site-theme={selectedThemeName}
+  data-theme-color={resolvedThemeColor}
+  data-theme-style={selectedStyleName}
+  data-fixed-theme-tone={fixedThemeTone}
+  style={themeColorInlineCss}
+>
+  <head>
+    {gaCode && (
+      <>
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+        />
+        <script is:inline set:html={gaCode} />
+      </>
+    )}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content={fixedThemeTone ?? "light dark"}>
+
+    {lightThemeColor && (
+      <meta
+        name="theme-color"
+        content={lightThemeColor}
+        data-light={lightThemeColor}
+        data-dark={darkThemeColor ?? lightThemeColor}
+      />
+    )}
+
+    {themeCss && <style is:inline set:html={themeCss} />}
+    {themeStyleCss && <style is:inline set:html={themeStyleCss} />}
+    {allThemeData && (
+      <script
+        id="all-theme-data"
+        type="application/json"
+        is:inline
+        set:html={allThemeData}
+      />
+    )}
+    {allStyleData && (
+      <script
+        id="all-style-data"
+        type="application/json"
+        is:inline
+        set:html={allStyleData}
+      />
+    )}
+    {i18n && (
+      <script
+        id="i18n-data"
+        type="application/json"
+        is:inline
+        set:html={i18n}
+      />
+    )}
+
+    <script>
+    import "../client/bootstrap";
+    </script>
+
+    <title>{title}</title>
+    <meta
+      name="robots"
+      content={isNoindex ? "noindex, nofollow" : "max-image-preview:large"}
+    >
+
+    <link
+      rel="icon"
+      href={favUrl ??
+        `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}favicon.svg`}
+    >
+
+    {description && (
+      <>
+        <meta name="description" content={description} />
+        <meta property="og:description" content={description} />
+      </>
+    )}
+
+    {baseUrl && (
+      <>
+        <link rel="canonical" href={baseUrl} />
+        <meta property="og:url" content={baseUrl} />
+      </>
+    )}
+
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content={title}>
+
+    {imageUrl && (
+      <>
+        <meta property="og:image" content={imageUrl} />
+        {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+      </>
+    )}
+
+    {jsonLd && (
+      <script is:inline type="application/ld+json" set:html={jsonLd} />
+    )}
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>

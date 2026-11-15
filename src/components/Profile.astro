@@ -1,0 +1,178 @@
+---
+import OrgBadges from "../components/LinkOrgBadges.astro";
+import IconLinks from "../components/LinkSiteIcons.astro";
+import ProfileAvatar from "../components/ProfileAvatar.astro";
+import ToggleLocale from "../components/ToggleLocale.astro";
+import ToggleSiteStyle from "../components/ToggleSiteStyle.astro";
+import ToggleSiteTheme from "../components/ToggleSiteTheme.astro";
+import ToggleTheme from "../components/ToggleTheme.astro";
+import {
+  githubAvatarUrl,
+  githubProfileUrl,
+  localeSrc,
+  locales,
+  siteConfig,
+} from "../config";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { fetchAvatar } from "../lib/fav";
+import { fetchOrgs } from "../lib/gh";
+import { getIconLinks, idUrls } from "../lib/links";
+import { getTranslations } from "../lib/profile";
+import { styleNames } from "../lib/style";
+
+const {
+  description,
+  githubName,
+  links,
+  organizations: orgNames,
+  tabName,
+  theme,
+  themeColor,
+  style,
+} = siteConfig;
+const isToggleLocale: boolean = locales.length > 1;
+const [profileSrc, favUrl, iconLinks, orgBadges] = await Promise.all([
+  getTranslations(localeSrc),
+  fetchAvatar(githubAvatarUrl),
+  getIconLinks(links),
+  fetchOrgs(orgNames ?? []),
+]);
+
+const srcTrans = {
+  locale: localeSrc,
+  title: profileSrc.title,
+  tagline: profileSrc.tagline,
+  themeModal: profileSrc.themeModal,
+  readmeHTML: profileSrc.readme.html,
+  version: profileSrc.version,
+};
+
+const url: URL = new URL(Astro.url.pathname, Astro.site);
+const sameAs: string[] = [...new Set([githubProfileUrl, ...idUrls(iconLinks)])];
+
+const structData = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: url.href,
+  name: profileSrc.title,
+  ...(description && { description }),
+
+  mainEntity: {
+    "@type": "Person",
+    name: tabName,
+    alternateName: githubName,
+    ...(description && { description }),
+    image: githubAvatarUrl,
+    url: url.href,
+    sameAs,
+  },
+};
+---
+
+<BaseLayout
+  title={profileSrc.title}
+  description={description}
+  url={url}
+  imageUrl={githubAvatarUrl}
+  imageAlt={`${tabName}'s GitHub profile photo`}
+  language={localeSrc}
+  theme={theme}
+  themeColor={themeColor}
+  style={style}
+  data={structData}
+  favUrl={favUrl}
+  locales={locales}
+  srcTrans={srcTrans}
+  defLanguage={localeSrc}
+>
+  <main
+    class="star-wars-profile "
+    aria-label="GitHub profile README"
+    style={`--starfield-url: url('${import.meta.env.BASE_URL.replace(/\/?$/, "/")}starfield.svg')`}
+  >
+    <div class="star-wars-stars " aria-hidden="true"></div>
+
+    <nav class="star-wars-controls " aria-label="Display settings">
+      <ToggleSiteTheme
+        imageUrl={githubAvatarUrl}
+        tagline={profileSrc.tagline}
+        translations={profileSrc.themeModal}
+        styleNames={styleNames()}
+      />
+      <ToggleSiteStyle
+        imageUrl={githubAvatarUrl}
+        tagline={profileSrc.tagline}
+        theme={theme}
+        translations={profileSrc.themeModal}
+      />
+      <ToggleTheme />
+      {isToggleLocale && <ToggleLocale locales={locales} />}
+    </nav>
+
+    <header class="star-wars-identity ">
+      <div class="star-wars-identity-plane ">
+        <ProfileAvatar
+          imageUrl={githubAvatarUrl}
+          profileUrl={githubProfileUrl}
+          tabName={tabName}
+          tagline={profileSrc.tagline}
+        />
+        <IconLinks links={iconLinks} />
+        <OrgBadges orgBadges={orgBadges} />
+      </div>
+    </header>
+
+    <div class="star-wars-crawl-window ">
+      <div class="star-wars-crawl-plane ">
+        <div class="star-wars-crawl-motion " id="star-wars-crawl">
+          <article
+            class="gh-readme "
+            data-crawl-original
+            data-i18n-readme
+            set:html={profileSrc.readme.html}
+          />
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="star-wars-pause-button "
+      type="button"
+      aria-label="Pause README crawl"
+      aria-pressed="false"
+      title="pause"
+      data-crawl-toggle
+    >
+      <svg class="star-wars-pause-icon " viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="6.5" y="5" width="3.5" height="14" rx="0.7" />
+        <rect x="14" y="5" width="3.5" height="14" rx="0.7" />
+      </svg>
+      <svg class="star-wars-play-icon " viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M8 5.25a1 1 0 0 1 1.52-.85l10 6.75a1 1 0 0 1 0 1.7l-10 6.75A1 1 0 0 1 8 18.75Z"
+        />
+      </svg>
+    </button>
+  </main>
+</BaseLayout>
+
+<script>
+import { CrawlController } from "../lib/crawl";
+
+const scene: HTMLElement | null =
+  document.querySelector<HTMLElement>(".star-wars-profile");
+const motion: HTMLElement | null =
+  scene?.querySelector<HTMLElement>(".star-wars-crawl-motion") ?? null;
+const head: HTMLElement | null =
+  scene?.querySelector<HTMLElement>(".star-wars-identity") ?? null;
+const controls: HTMLElement | null =
+  scene?.querySelector<HTMLElement>(".star-wars-controls") ?? null;
+const readme: HTMLElement | null =
+  scene?.querySelector<HTMLElement>("[data-crawl-original]") ?? null;
+const btn: HTMLButtonElement | null =
+  scene?.querySelector<HTMLButtonElement>("[data-crawl-toggle]") ?? null;
+
+if (scene && motion && head && controls && readme) {
+  new CrawlController({ scene, motion, head, controls, readme, btn });
+}
+</script>
