@@ -1,0 +1,348 @@
+---
+import { type ThemeModalTrans, themeModalSrc } from "../lib/i18n";
+import SitePreview from "./SitePreview.astro";
+
+interface Props {
+  names: string[];
+  imageUrl: string;
+  tagline?: string;
+  theme?: string;
+  translations?: ThemeModalTrans;
+}
+const {
+  names,
+  imageUrl,
+  tagline,
+  theme = "abyss",
+  translations = themeModalSrc,
+} = Astro.props;
+const styleLbl = (name: string): string =>
+  name
+    .split(/[-_]+/)
+    .map((part: string): string => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+---
+
+<button
+  id="site-style-toggle"
+  type="button"
+  class="site-style-toggle group"
+  aria-label="Choose style"
+  aria-controls="site-style-dialog"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+>
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+    <path d="m3 12 9 5 9-5" />
+    <path d="m3 17 9 5 9-5" />
+  </svg>
+  <span class="v-toggle-site-style-2" aria-hidden="true"
+    ><span data-site-style-tooltip></span></span
+  >
+</button>
+
+<dialog
+  id="site-style-dialog"
+  class="site-style-dialog"
+  aria-labelledby="site-style-dialog-heading"
+>
+  <div class="site-style-dialog-scroll">
+    <div class="site-style-dialog-sticky">
+      <div class="site-style-dialog-header">
+        <h2 id="site-style-dialog-heading" class="v-toggle-site-style-6">
+          {translations.style === "Style" ? "Styles" : translations.style}
+        </h2>
+        <fieldset
+          class="site-style-dialog-modes"
+          aria-label={translations.mode}
+        >
+          <button
+            type="button"
+            class="v-theme-choice"
+            data-site-style-mode="light"
+            aria-pressed="false"
+          >
+            Light
+          </button>
+          <button
+            type="button"
+            class="v-theme-choice"
+            data-site-style-mode="dark"
+            aria-pressed="false"
+          >
+            Dark
+          </button>
+        </fieldset>
+        <input
+          id="site-style-search"
+          class="site-theme-dialog-search site-style-dialog-search"
+          type="search"
+          placeholder="Search styles"
+          aria-label="Search styles"
+          aria-controls="site-style-options"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button
+          type="button"
+          data-site-style-close
+          aria-label="Close style selector"
+          class="site-theme-dialog-close"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+    <div class="v-toggle-site-theme-19">
+      <div id="site-style-options" class="v-toggle-site-theme-20">
+        {names.map((name: string) => (
+          <button
+            type="button"
+            data-site-style-option={name}
+            data-site-style-search={`${styleLbl(name)} ${name}`}
+            aria-pressed="false"
+            class="site-theme-option"
+          >
+            <span class="v-toggle-site-theme-22">
+              <span class="v-toggle-site-theme-23">
+                <strong class="v-toggle-site-theme-24">{styleLbl(name)}</strong>
+                <small class="v-toggle-site-theme-25">{name}</small>
+              </span>
+              <span class="site-theme-option-selected" aria-hidden="true">
+                ✓
+              </span>
+            </span>
+            <SitePreview
+              name={name}
+              theme={theme}
+              imageUrl={imageUrl}
+              tagline={tagline}
+              translations={translations}
+              variant="style"
+            />
+          </button>
+        ))}
+      </div>
+      <p class="v-toggle-site-theme-38" data-site-style-empty hidden>
+        No styles found
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const btn: HTMLElement | null = document.getElementById("site-style-toggle");
+const dlg: HTMLElement | null = document.getElementById("site-style-dialog");
+const root: HTMLElement = document.documentElement;
+if (btn instanceof HTMLButtonElement && dlg instanceof HTMLDialogElement) {
+  const tooltip: HTMLElement | null = btn.querySelector(
+    "[data-site-style-tooltip]",
+  );
+  const close: HTMLButtonElement | null = dlg.querySelector(
+    "[data-site-style-close]",
+  );
+  const search: HTMLInputElement | null =
+    dlg.querySelector("#site-style-search");
+  const empty: HTMLElement | null = dlg.querySelector(
+    "[data-site-style-empty]",
+  );
+  const modeBtns: HTMLButtonElement[] = Array.from(
+    dlg.querySelectorAll<HTMLButtonElement>("[data-site-style-mode]"),
+  );
+  let previewMode: "light" | "dark" = root.classList.contains("dark")
+    ? "dark"
+    : "light";
+  const syncMode = (): void => {
+    dlg.dataset.previewMode = previewMode;
+    for (const modeBtn of modeBtns) {
+      modeBtn.setAttribute(
+        "aria-pressed",
+        String(modeBtn.dataset.siteStyleMode === previewMode),
+      );
+    }
+  };
+  const viewport: HTMLElement | null = dlg.querySelector(
+    ".site-style-dialog-scroll",
+  );
+  const header: HTMLElement | null = dlg.querySelector(
+    ".site-style-dialog-sticky",
+  );
+  const opts: HTMLButtonElement[] = Array.from(
+    dlg.querySelectorAll("[data-site-style-option]"),
+  );
+  const previews: HTMLElement[] = Array.from(
+    dlg.querySelectorAll("[data-site-style-preview]"),
+  );
+  const scaleMinimum: Record<string, number> = {
+    blueprint: 0.58,
+    grain: 0.9,
+    grid: 0.58,
+    halftone: 0.72,
+  };
+
+  const syncScale = (): void => {
+    const pageWidth: number = Math.max(root.clientWidth, 1);
+    const sizes: {
+      el: HTMLElement;
+      scale: number;
+      width: number;
+      height: number;
+    }[] = [];
+    for (const preview of previews) {
+      const style: string = preview.dataset.siteStylePreview ?? "";
+      const card: HTMLElement | null = preview.closest<HTMLElement>(
+        ".site-theme-preview",
+      );
+      if (!card) continue;
+      const width: number = card.clientWidth;
+      const height: number = card.clientHeight;
+      if (!width || !height) continue;
+      const scale: number = Math.max(
+        Math.min(1, width / pageWidth),
+        scaleMinimum[style] ?? 0,
+      );
+      sizes.push({ el: preview, scale, width, height });
+    }
+    for (const { el, scale, width, height } of sizes) {
+      el.style.setProperty(
+        "--site-style-preview-source-width",
+        `${width / scale}px`,
+      );
+      el.style.setProperty(
+        "--site-style-preview-source-height",
+        `${height / scale}px`,
+      );
+      el.style.setProperty("--site-style-preview-scale", String(scale));
+    }
+  };
+
+  const sync = (): HTMLButtonElement | undefined => {
+    const current: string = root.dataset.themeStyle ?? "";
+    const theme: string = root.dataset.siteTheme ?? "abyss";
+    btn.setAttribute(
+      "aria-label",
+      current ? `Choose style. Current style: ${current}.` : "Choose style",
+    );
+    if (tooltip) tooltip.textContent = current;
+    for (const option of opts) {
+      option.setAttribute(
+        "aria-pressed",
+        String(option.dataset.siteStyleOption === current),
+      );
+      const preview: HTMLElement | null = option.querySelector(
+        "[data-site-theme-preview]",
+      );
+      if (preview) preview.dataset.siteThemePreview = theme;
+    }
+    syncScale();
+    return opts.find(
+      (option: HTMLButtonElement): boolean =>
+        option.dataset.siteStyleOption === current,
+    );
+  };
+
+  const filter = (): void => {
+    const query: string = search?.value.toLowerCase().trim() ?? "";
+    let count: number = 0;
+    for (const option of opts) {
+      const txt: string = (
+        option.dataset.siteStyleSearch ??
+        option.dataset.siteStyleOption ??
+        ""
+      ).toLowerCase();
+      option.hidden = Boolean(query) && !txt.includes(query);
+      if (!option.hidden) count += 1;
+    }
+    if (empty) empty.hidden = count > 0;
+  };
+
+  sync();
+  syncMode();
+  btn.addEventListener("click", (): void => {
+    if (btn.disabled) return;
+    previewMode = root.classList.contains("dark") ? "dark" : "light";
+    syncMode();
+    if (search) search.value = "";
+    filter();
+    const active: HTMLButtonElement | undefined = sync();
+    dlg.showModal();
+    btn.setAttribute("aria-expanded", "true");
+    requestAnimationFrame((): void => {
+      syncScale();
+      if (!active) {
+        search?.focus();
+        return;
+      }
+      const box: DOMRect =
+        viewport?.getBoundingClientRect() ?? dlg.getBoundingClientRect();
+      const item: DOMRect = active.getBoundingClientRect();
+      const top: number =
+        box.top + (header?.getBoundingClientRect().height ?? 0);
+      const center: number = top + (box.bottom - top) / 2;
+      if (viewport) viewport.scrollTop += item.top + item.height / 2 - center;
+      active.focus({ preventScroll: true });
+    });
+  });
+  for (const modeBtn of modeBtns) {
+    modeBtn.addEventListener("click", (): void => {
+      const mode: string | undefined = modeBtn.dataset.siteStyleMode;
+      if (mode !== "light" && mode !== "dark") return;
+      previewMode = mode;
+      syncMode();
+    });
+  }
+  for (const option of opts) {
+    option.addEventListener("click", (): void => {
+      const style: string | undefined = option.dataset.siteStyleOption;
+      if (!style) return;
+      const themeBtn: HTMLElement | null =
+        document.getElementById("theme-toggle");
+      if (
+        themeBtn instanceof HTMLButtonElement &&
+        !themeBtn.disabled &&
+        root.classList.contains("dark") !== (previewMode === "dark")
+      ) {
+        themeBtn.click();
+      }
+      window.dispatchEvent(
+        new CustomEvent("site-style-select", { detail: { style } }),
+      );
+      dlg.close();
+    });
+  }
+  search?.addEventListener("input", filter);
+  close?.addEventListener("click", (): void => dlg.close());
+  dlg.addEventListener("close", (): void => {
+    btn.setAttribute("aria-expanded", "false");
+    btn.focus();
+  });
+  dlg.addEventListener("click", (event: MouseEvent): void => {
+    if (event.target !== dlg) return;
+    const box: DOMRect = dlg.getBoundingClientRect();
+    if (
+      event.clientX < box.left ||
+      event.clientX > box.right ||
+      event.clientY < box.top ||
+      event.clientY > box.bottom
+    )
+      dlg.close();
+  });
+  window.addEventListener("site-style-change", sync);
+  window.addEventListener("site-theme-change", sync);
+  window.addEventListener("resize", (): void => {
+    if (dlg.open) syncScale();
+  });
+  window.addEventListener("pageshow", sync);
+}
+</script>

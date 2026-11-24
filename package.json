@@ -1,0 +1,41 @@
+{
+  "name": "github-profile-site",
+  "version": "1.0.0",
+  "description": "Configurable GitHub profile site with avatar & optional tagline, translations, themes, & icon links.",
+  "private": true,
+  "type": "module",
+  "author": "profile-icons",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/profile-icons/github-profile-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/profile-icons/github-profile-site/issues"
+  },
+  "engines": {
+    "node": ">=26.13"
+  },
+  "scripts": {
+    "i18n": "bash scripts/i18n.sh",
+    "dev": "npm run i18n && astro dev",
+    "build": "npm run i18n && astro build",
+    "preview": "astro preview",
+    "verify": "biome check . && astro check && tsc --noEmit && cargo fmt --manifest-path i18n/Cargo.toml --all -- --check && cargo clippy --manifest-path i18n/Cargo.toml --locked --all-targets --all-features -- -D warnings",
+    "verify:fix": "biome check --write . && cargo clippy --manifest-path i18n/Cargo.toml --locked --fix --allow-dirty --allow-staged --all-targets --all-features -- -D warnings && cargo fmt --manifest-path i18n/Cargo.toml --all && npm run verify"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.6",
+    "astro": "^7.4.13",
+    "bootstrap-icons": "^1.13.2",
+    "simple-icons": "^16.38.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@biomejs/biome": "^2.6.8",
+    "sass": "^1.108.2",
+    "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true
+  }
+}

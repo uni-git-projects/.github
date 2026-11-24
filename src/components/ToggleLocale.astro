@@ -1,0 +1,250 @@
+---
+interface Props {
+  locales: string[];
+}
+
+const { locales } = Astro.props;
+
+const sortedLocales: string[] = [...locales].sort((a, b) =>
+  a.toLowerCase().localeCompare(b.toLowerCase()),
+);
+
+const isLocaleDialog: boolean = sortedLocales.length > 2;
+---
+
+<button
+  id="i18n-toggle"
+  type="button"
+  class="i18n-toggle group "
+  aria-label={isLocaleDialog ? "Choose language" : "Switch language"}
+  aria-expanded={isLocaleDialog ? "false" : undefined}
+  aria-controls={isLocaleDialog ? "i18n-dialog" : undefined}
+  aria-haspopup={isLocaleDialog ? "dialog" : undefined}
+>
+  <svg
+    class="v-togglelocale-2"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="9"></circle>
+    <path
+      d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"
+    ></path>
+  </svg>
+
+  <span class="v-toggle-site-theme-3" aria-hidden="true">
+    <span data-i18n-tooltip-locale></span>
+  </span>
+</button>
+
+{isLocaleDialog && (
+  <dialog
+    id="i18n-dialog"
+    class="i18n-dialog "
+    aria-labelledby="i18n-dialog-heading"
+  >
+    <div class="i18n-dialog-scroll ">
+      <div class="i18n-dialog-sticky ">
+        <div class="i18n-dialog-header">
+          <h2 id="i18n-dialog-heading" class="v-toggle-site-theme-8">
+            Language
+          </h2>
+          <input
+            id="i18n-search"
+            class="i18n-dialog-search"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search languages"
+            aria-controls="i18n-options"
+          />
+          <button
+            type="button"
+            class="i18n-dialog-close"
+            aria-label="Close language selector"
+            data-i18n-dialog-close
+          >
+            ×
+          </button>
+        </div>
+      </div>
+
+      <div class="v-toggle-site-theme-19">
+        <div id="i18n-options" class="v-togglelocale-8" translate="no">
+          {sortedLocales.map((locale: string) => (
+            <button
+              type="button"
+              class="i18n-option "
+              data-i18n-locale-option={locale}
+              aria-pressed="false"
+            >
+              <span lang={locale} dir="auto" data-i18n-locale-name>
+                {locale}
+              </span>
+              <small dir="ltr" class="v-togglelocale-10">
+                {locale.toUpperCase()}
+              </small>
+            </button>
+          ))}
+        </div>
+
+        <p class="v-toggle-site-theme-38" data-i18n-empty hidden>
+          No languages found
+        </p>
+      </div>
+    </div>
+  </dialog>
+)}
+
+<script>
+import { localeNorm } from "../lib/i18n";
+
+const button: HTMLElement | null = document.getElementById("i18n-toggle");
+const root: HTMLElement = document.documentElement;
+const dialog: HTMLDialogElement | null =
+  document.querySelector<HTMLDialogElement>("#i18n-dialog");
+
+const languageName = (locale: string, displayLocale: string): string => {
+  try {
+    const value: string | undefined = new Intl.DisplayNames([displayLocale], {
+      type: "language",
+    }).of(locale);
+    return value && value !== locale ? value : locale;
+  } catch {
+    return locale;
+  }
+};
+
+if (button instanceof HTMLButtonElement) {
+  const tooltipLocale: HTMLElement | null = button.querySelector(
+    "[data-i18n-tooltip-locale]",
+  );
+  const search: HTMLInputElement | null =
+    dialog?.querySelector<HTMLInputElement>("#i18n-search") ?? null;
+  const empty: HTMLElement | null =
+    dialog?.querySelector<HTMLElement>("[data-i18n-empty]") ?? null;
+  const closeButton: HTMLButtonElement | null =
+    dialog?.querySelector<HTMLButtonElement>("[data-i18n-dialog-close]") ??
+    null;
+  const optionsContainer: HTMLElement | null =
+    dialog?.querySelector<HTMLElement>("#i18n-options") ?? null;
+  const options: HTMLButtonElement[] = dialog
+    ? Array.from(
+        dialog.querySelectorAll<HTMLButtonElement>("[data-i18n-locale-option]"),
+      )
+    : [];
+
+  for (const option of options) {
+    const locale: string = option.dataset.i18nLocaleOption ?? "";
+    const nativeName: string = languageName(locale, locale);
+    const englishName: string = languageName(locale, "en");
+    const name: HTMLElement | null = option.querySelector<HTMLElement>(
+      "[data-i18n-locale-name]",
+    );
+
+    if (name) name.textContent = nativeName;
+    option.dataset.i18nSearch = `${nativeName} ${englishName} ${locale}`;
+    option.dataset.i18nSort = englishName;
+  }
+
+  const localeCollator = new Intl.Collator("en", {
+    sensitivity: "base",
+    numeric: true,
+  });
+  options.sort((a, b) =>
+    localeCollator.compare(a.dataset.i18nSort ?? "", b.dataset.i18nSort ?? ""),
+  );
+  optionsContainer?.append(...options);
+
+  const syncLabel = (): void => {
+    const locale: string = root.dataset.locale || root.lang || "";
+    const cur: string = locale ? ` Current language: ${locale}.` : "";
+    const action: string = dialog ? "Choose language." : "Switch language.";
+    button.setAttribute("aria-label", `${action}${cur}`);
+    if (tooltipLocale) tooltipLocale.textContent = locale || "—";
+
+    const norm: string = localeNorm(locale);
+    for (const option of options) {
+      option.setAttribute(
+        "aria-pressed",
+        String(localeNorm(option.dataset.i18nLocaleOption ?? "") === norm),
+      );
+    }
+  };
+
+  const filterOptions = (): void => {
+    const query: string = (search?.value ?? "")
+      .normalize("NFD")
+      .replace(/\p{M}/gu, "")
+      .toLowerCase()
+      .trim();
+    let visible: number = 0;
+
+    for (const option of options) {
+      const searchText: string = (option.dataset.i18nSearch ?? "")
+        .normalize("NFD")
+        .replace(/\p{M}/gu, "")
+        .toLowerCase();
+      option.hidden = Boolean(query) && !searchText.includes(query);
+      if (!option.hidden) visible += 1;
+    }
+
+    if (empty) empty.hidden = visible > 0;
+  };
+
+  syncLabel();
+
+  button.addEventListener("click", (): void => {
+    if (!dialog) {
+      window.dispatchEvent(new Event("i18n-toggle"));
+      return;
+    }
+
+    if (search) search.value = "";
+    filterOptions();
+    syncLabel();
+    dialog.showModal();
+    button.setAttribute("aria-expanded", "true");
+    search?.focus();
+  });
+
+  for (const option of options) {
+    option.addEventListener("click", (): void => {
+      const locale: string = option.dataset.i18nLocaleOption ?? "";
+      if (!locale) return;
+
+      window.dispatchEvent(
+        new CustomEvent("i18n-select", {
+          detail: { locale },
+        }),
+      );
+      dialog?.close();
+    });
+  }
+
+  search?.addEventListener("input", filterOptions);
+  closeButton?.addEventListener("click", (): void => dialog?.close());
+
+  dialog?.addEventListener("close", (): void => {
+    button.setAttribute("aria-expanded", "false");
+    button.focus();
+  });
+
+  dialog?.addEventListener("click", (event: MouseEvent): void => {
+    if (event.target !== dialog) return;
+    const box: DOMRect = dialog.getBoundingClientRect();
+    if (
+      event.clientX < box.left ||
+      event.clientX > box.right ||
+      event.clientY < box.top ||
+      event.clientY > box.bottom
+    ) {
+      dialog.close();
+    }
+  });
+
+  window.addEventListener("i18n-toggle-readme", syncLabel);
+}
+</script>

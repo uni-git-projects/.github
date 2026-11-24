@@ -1,0 +1,59 @@
+---
+import type { ThemeModalTrans } from "../lib/i18n";
+
+interface Props {
+  name: string;
+  theme: string;
+  imageUrl: string;
+  tagline?: string | undefined;
+  translations: ThemeModalTrans;
+  variant: "theme" | "style";
+}
+
+const { name, theme, imageUrl, tagline, translations, variant } = Astro.props;
+---
+
+<span
+  class="site-theme-preview"
+  data-site-theme-preview={theme}
+  aria-hidden="true"
+>
+  <span
+    class="site-theme-preview-style-layer"
+    data-site-style-preview={variant === "style" ? name : undefined}
+    aria-hidden="true"
+  ></span>
+  <span class="v-toggle-site-theme-29">
+    <img
+      class="v-toggle-site-theme-30"
+      src={imageUrl}
+      alt=""
+      width="160"
+      height="160"
+      loading="lazy"
+    >
+    {tagline && (
+      <small class="v-toggle-site-theme-31" data-i18n-tagline>
+        {tagline.trim()}
+      </small>
+    )}
+  </span>
+  <span class="v-toggle-site-theme-32">
+    <strong class="v-toggle-site-theme-33" data-i18n-theme-modal-preview-title>
+      {translations.previewTitle}
+    </strong>
+    <span
+      data-i18n-theme-modal-preview-body
+      set:html={translations.previewHTML}
+    />
+    <span class="v-toggle-site-theme-34">
+      <span>
+        <b class="v-toggle-site-theme-35">const</b>{" "}
+        <i class="v-toggle-site-theme-36">{variant}</i>{" "}
+        ={" "}
+        <em class="v-toggle-site-theme-37">"{name}"</em>
+        <span>;</span>
+      </span>
+    </span>
+  </span>
+</span>

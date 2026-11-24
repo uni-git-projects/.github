@@ -1,0 +1,78 @@
+@mixin styles {
+  .copy-code-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid var(--details-border);
+    border-radius: 0.375rem;
+    background: var(--code-background);
+    color: var(--page-text);
+    cursor: pointer;
+    opacity: 1 !important;
+    transition:
+      transform 100ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .copy-code-button:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  .copy-code-button:hover {
+    border-color: var(--link-hover-border);
+    background: var(--link-hover-background);
+    color: var(--link-hover-text);
+  }
+
+  .copy-code-button:active {
+    transform: scale(0.95);
+  }
+
+  .copy-code-button svg {
+    display: block;
+    width: 1rem !important;
+    height: 1rem !important;
+    fill: currentColor !important;
+    stroke: none !important;
+    pointer-events: none;
+  }
+
+  .copy-code-button.copied {
+    border-color: var(--success-text) !important;
+    color: var(--success-text) !important;
+  }
+
+  html[dir="rtl"] .gh-readme :where(pre, code, kbd, samp) {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: left;
+  }
+
+  html[dir="rtl"] .gh-readme a[href^="http"],
+  html[dir="rtl"] .gh-readme a[href^="//"],
+  html[dir="rtl"] .gh-readme a[href^="mailto:"],
+  html[dir="rtl"] .gh-readme a[href^="tel:"] {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  html[dir="rtl"] .gh-readme pre :where(*) {
+    direction: ltr;
+  }
+
+  @media (min-width: 768px) {
+    .gh-readme p:has(> a > img[alt*="pin img"]) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 0.5rem;
+    }
+  }
+}

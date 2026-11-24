@@ -1,0 +1,184 @@
+name: deploy-gh-page
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: true
+
+jobs:
+  check-binary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - name: Check existing release
+        id: check
+        run: |
+          tag="binary-$GITHUB_SHA"
+          exists=false
+
+          if assets="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | select(.state == "uploaded" and .size > 0) | .name')"; then
+            exists=true
+            for platform in linux-x64 linux-arm64; do
+              asset="gh-profile-i18n-$platform.tar.gz"
+              for file in "$asset" "$asset.sha256"; do
+                if ! grep -Fxq "$file" <<< "$assets"; then
+                  exists=false
+                fi
+              done
+            done
+          fi
+
+          echo "exists=$exists" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  binary:
+    needs: check-binary
+    if: needs.check-binary.outputs.exists != 'true'
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux-x64
+          - runner: ubuntu-24.04-arm
+            platform: linux-arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Rust
+        run: rustup toolchain install 1.100.0 --profile minimal
+
+      - name: Cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            .cache/i18n/lib
+            .cache/i18n/model-cache
+          key: i18n-small100-a0d8498-ort-1.22.0-${{ matrix.platform }}
+
+      - name: Bundle
+        run: |
+          rustup override set 1.100.0
+          if [[ ! -f i18n/Cargo.lock ]]; then
+            cargo generate-lockfile --manifest-path i18n/Cargo.toml
+          fi
+          cargo test --locked --manifest-path i18n/Cargo.toml --target-dir .cache/i18n-target
+          bash scripts/build-i18n.sh
+          asset="gh-profile-i18n-${{ matrix.platform }}.tar.gz"
+          tar -czf "$asset" -C .cache/i18n gh-profile-i18n run-i18n SOURCE_COMMIT lib model-cache
+          sha256sum "$asset" > "$asset.sha256"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: i18n-${{ matrix.platform }}
+          path: |
+            gh-profile-i18n-*.tar.gz
+            gh-profile-i18n-*.tar.gz.sha256
+          compression-level: 0
+          if-no-files-found: error
+          include-hidden-files: true
+
+  release:
+    runs-on: ubuntu-latest
+    needs: binary
+    permissions:
+      contents: write
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v7
+        with:
+          pattern: i18n-*
+          merge-multiple: true
+
+      - name: Release
+        run: |
+          tag="binary-$GITHUB_SHA"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" gh-profile-i18n-*.tar.gz gh-profile-i18n-*.tar.gz.sha256 \
+              --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$tag" gh-profile-i18n-*.tar.gz gh-profile-i18n-*.tar.gz.sha256 \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$tag" \
+              --notes "Localization binaries for $GITHUB_SHA" --prerelease
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  build:
+    needs: [check-binary, release]
+    if: |
+      !cancelled() &&
+      needs.check-binary.result == 'success' &&
+      (
+        needs.check-binary.outputs.exists == 'true' ||
+        needs.release.result == 'success'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Check
+        run: npm run verify
+
+      - name: Setup i18n
+        run: bash scripts/setup-bin.sh "$GITHUB_REPOSITORY" "$GITHUB_SHA"
+
+      - name: i18n
+        run: npm run i18n
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Build
+        run: npm exec -- astro build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

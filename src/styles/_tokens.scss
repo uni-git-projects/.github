@@ -1,0 +1,119 @@
+@mixin styles {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+    background: var(--page-background);
+
+    --page-background: #fff;
+    --page-glow: rgb(224 242 254 / 0.6);
+    --page-text: #0f172a;
+
+    --details-border: rgb(226 232 240);
+    --tagline-text: rgb(71 85 105);
+    --focus-ring: rgb(14 165 233 / 0.4);
+    --success-text: #15803d;
+
+    --toggle-background: rgb(255 255 255 / 0.88);
+    --toggle-border: rgb(203 213 225 / 0.9);
+    --toggle-text: #0f172a;
+    --toggle-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
+
+    --link-background: rgb(255 255 255 / 0.72);
+    --link-border: rgb(203 213 225 / 0.9);
+    --link-text: rgb(51 65 85);
+    --link-shadow: 0 4px 12px rgb(15 23 42 / 0.08);
+
+    --link-hover-background: rgb(240 249 255 / 0.95);
+    --link-hover-border: rgb(14 165 233 / 0.45);
+    --link-hover-text: rgb(2 132 199);
+
+    --readme-text: #0f172a;
+    --readme-heading: #0f172a;
+    --readme-muted: #64748b;
+    --readme-link: #0284c7;
+    --readme-link-hover: #0369a1;
+    --readme-border: #e2e8f0;
+    --readme-blockquote-text: #64748b;
+    --readme-blockquote-border: #cbd5e1;
+    --readme-table-row-alt: rgb(248 250 252 / 0.75);
+    --readme-kbd-background: #f8fafc;
+    --readme-kbd-border: #cbd5e1;
+    --readme-kbd-text: #0f172a;
+    --readme-mark-background: #fef08a;
+
+    --code-background: #f6f8fa;
+    --code-text: #24292f;
+    --inline-code-background: rgb(175 184 193 / 0.2);
+
+    --syntax-comment: #6e7781;
+    --syntax-keyword: #cf222e;
+    --syntax-string: #0a3069;
+    --syntax-function: #8250df;
+    --syntax-entity: #953800;
+    --syntax-variable: #0550ae;
+    --syntax-tag: #116329;
+  }
+
+  html.dark {
+    color-scheme: dark;
+
+    --page-background: #020617;
+    --page-glow: rgb(14 116 144 / 0.16);
+    --page-text: #e2e8f0;
+
+    --details-border: rgb(51 65 85);
+    --tagline-text: rgb(148 163 184);
+    --success-text: #4ade80;
+
+    --toggle-background: rgb(15 23 42 / 0.88);
+    --toggle-border: rgb(71 85 105 / 0.9);
+    --toggle-text: #f8fafc;
+    --toggle-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+
+    --link-background: rgb(15 23 42 / 0.72);
+    --link-border: rgb(71 85 105 / 0.9);
+    --link-text: rgb(203 213 225);
+    --link-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+
+    --link-hover-background: rgb(30 41 59 / 0.95);
+    --link-hover-border: rgb(56 189 248 / 0.5);
+    --link-hover-text: rgb(125 211 252);
+
+    --readme-text: #e2e8f0;
+    --readme-heading: #f8fafc;
+    --readme-muted: #94a3b8;
+    --readme-link: #7dd3fc;
+    --readme-link-hover: #bae6fd;
+    --readme-border: #334155;
+    --readme-blockquote-text: #94a3b8;
+    --readme-blockquote-border: #475569;
+    --readme-table-row-alt: rgb(15 23 42 / 0.55);
+    --readme-kbd-background: #0f172a;
+    --readme-kbd-border: #475569;
+    --readme-kbd-text: #f8fafc;
+    --readme-mark-background: rgb(161 98 7 / 0.5);
+
+    --code-background: #161b22;
+    --code-text: #e6edf3;
+    --inline-code-background: rgb(110 118 129 / 0.4);
+
+    --syntax-comment: #8b949e;
+    --syntax-keyword: #ff7b72;
+    --syntax-string: #a5d6ff;
+    --syntax-function: #d2a8ff;
+    --syntax-entity: #ffa657;
+    --syntax-variable: #79c0ff;
+    --syntax-tag: #7ee787;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top, var(--page-glow), transparent 28rem),
+      var(--page-background);
+    color: var(--page-text);
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+}
