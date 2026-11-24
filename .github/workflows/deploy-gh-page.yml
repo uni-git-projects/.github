@@ -25,9 +25,7 @@ jobs:
 
       - name: Build
         id: profile-site
-        uses: profile-icons/github-profile-readme-site@main
-        with:
-          hf-token: ${{ secrets.HF_TOKEN }}  # optional
+        uses: profile-icons/github-profile-site@main
 
       - name: Upload
         uses: actions/upload-pages-artifact@v5
